@@ -80,7 +80,8 @@ public class TypingManager : MonoBehaviour
     {
         // 正解した時の処理（やりたいこと）
         _aNum++;
-        Debug.Log("正解したよ！");
+        aText.text = _aString.Substring(0, _aNum) + _aString.Substring(_aNum);
+        Debug.Log(_aNum);
     }
 
     // 間違え用の関数
