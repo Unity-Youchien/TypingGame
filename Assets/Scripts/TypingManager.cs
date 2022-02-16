@@ -80,7 +80,7 @@ public class TypingManager : MonoBehaviour
     {
         // 正解した時の処理（やりたいこと）
         _aNum++;
-        aText.text = _aString.Substring(0, _aNum) + _aString.Substring(_aNum);
+        aText.text = "<color=#6A6A6A>" + _aString.Substring(0, _aNum) + "</color>" + _aString.Substring(_aNum);
         Debug.Log(_aNum);
     }
 
@@ -88,6 +88,8 @@ public class TypingManager : MonoBehaviour
     void Miss()
     {
         // 間違えた時にやりたいこと
-        Debug.Log("間違えたよ！");
+        aText.text = "<color=#6A6A6A>" + _aString.Substring(0, _aNum) + "</color>"
+            + "<color=#FF0000>" + _aString.Substring(_aNum, 1) + "</color>"
+            + _aString.Substring(_aNum + 1);
     }
 }
