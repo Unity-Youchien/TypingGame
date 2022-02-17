@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 // 画面にあるテキストの文字を変更したい
 public class TypingManager : MonoBehaviour
@@ -20,12 +21,12 @@ public class TypingManager : MonoBehaviour
     // テキストデータを読み込む
     [SerializeField] TextAsset _furigana;
     [SerializeField] TextAsset _question;
-    [SerializeField] TextAsset _answer;
+    //[SerializeField] TextAsset _answer;
 
     // テキストデータを格納するためのリスト
     private List<string> _fList = new List<string>();
     private List<string> _qList = new List<string>();
-    private List<string> _aList = new List<string>();
+    //private List<string> _aList = new List<string>();
 
     // 何番目か指定するためのstring
     private string _fString;
@@ -41,9 +42,16 @@ public class TypingManager : MonoBehaviour
     // 合ってるかどうかの判断
     bool isCorrect;
 
+    private ChangeDictionary cd;
+
+    // しんぶん→"shi","n","bu","n"
+    private List<string> _romSliceList = new List<string>();
+
     // ゲームを始めた時に1度だけ呼ばれるもの
     void Start()
     {
+        cd = GetComponent<ChangeDictionary>();
+
         // テキストデータをリストに入れる
         SetList();
 
@@ -96,8 +104,22 @@ public class TypingManager : MonoBehaviour
         string[] _qArray = _question.text.Split('\n');
         _qList.AddRange(_qArray);
 
-        string[] _aArray = _answer.text.Split('\n');
-        _aList.AddRange(_aArray);
+        //string[] _aArray = _answer.text.Split('\n');
+        //_aList.AddRange(_aArray);
+    }
+
+    // しんぶん→"shi","n","bu","n"
+    void CreatRomSliceList(string moji)
+    {
+        _romSliceList.Clear();
+
+        // 「し」→「si」,「ん」→「n」
+        for (int i = 0; i < moji.Length; i++)
+        {
+            string a = cd.dic[moji[i].ToString()];
+            _romSliceList.Add(a);
+        }
+        Debug.Log(string.Join(",", _romSliceList));
     }
 
     // 問題を出すための関数
@@ -111,7 +133,10 @@ public class TypingManager : MonoBehaviour
 
         _fString = _fList[_qNum];
         _qString = _qList[_qNum];
-        _aString = _aList[_qNum];
+
+        CreatRomSliceList(_fString);
+
+        _aString = string.Join("", _romSliceList);
 
         // 文字を変更する
         fText.text = _fString;
@@ -125,7 +150,7 @@ public class TypingManager : MonoBehaviour
         // 正解した時の処理（やりたいこと）
         _aNum++;
         aText.text = "<color=#6A6A6A>" + _aString.Substring(0, _aNum) + "</color>" + _aString.Substring(_aNum);
-        Debug.Log(_aNum);
+        //Debug.Log(_aNum);
     }
 
     // 間違え用の関数

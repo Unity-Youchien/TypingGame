@@ -1298,6 +1298,7 @@ GameObject:
   m_Component:
   - component: {fileID: 928261122}
   - component: {fileID: 928261121}
+  - component: {fileID: 928261123}
   m_Layer: 0
   m_Name: Typing Manager
   m_TagString: Untagged
@@ -1322,7 +1323,6 @@ MonoBehaviour:
   aText: {fileID: 1288918762}
   _furigana: {fileID: 4900000, guid: 4375e19a541de44c68738b2adab26fcc, type: 3}
   _question: {fileID: 4900000, guid: c39c8387fafc84bd686b396bfe180877, type: 3}
-  _answer: {fileID: 4900000, guid: ca9157408aa6944a1b4c0de432562e98, type: 3}
 --- !u!4 &928261122
 Transform:
   m_ObjectHideFlags: 0
@@ -1337,6 +1337,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &928261123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 928261120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b9ae988d62a4ef9b2958955773ff00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1010401344
 GameObject:
   m_ObjectHideFlags: 0
