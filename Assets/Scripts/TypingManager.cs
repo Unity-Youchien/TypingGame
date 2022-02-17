@@ -133,7 +133,7 @@ public class TypingManager : MonoBehaviour
                         if (Input.GetKeyDown(rom[romNum].ToString()))
                         {
                             _romSliceList[furiCount] = rom;
-                            _aString = string.Join("", _romSliceList);
+                            _aString = string.Join("", GetRomSliceListWithoutSkip());
 
                             ReCreatList(_romSliceList);
 
@@ -190,13 +190,30 @@ public class TypingManager : MonoBehaviour
         {
             string a = cd.dic[moji[i].ToString()];
 
-            if (moji[i].ToString() == "っ" && i + 1 < moji.Length)
+            if (moji[i].ToString() == "ゃ" || moji[i].ToString() == "ゅ" || moji[i].ToString() == "ょ")
+            {
+                a = "SKIP";
+            }
+            else if (moji[i].ToString() == "っ" && i + 1 < moji.Length)
             {
                 a = cd.dic[moji[i + 1].ToString()][0].ToString();
+            }
+            else if (i + 1 < moji.Length)
+            {
+                // 次の文字も含めて辞書から探す
+                string addNextMoji = moji[i].ToString() + moji[i + 1].ToString();
+                if (cd.dic.ContainsKey(addNextMoji))
+                {
+                    a = cd.dic[addNextMoji];
+                }
             }
 
             _romSliceList.Add(a);
 
+            if (a == "SKIP")
+            {
+                continue;
+            }
             for (int j = 0; j < a.Length; j++)
             {
                 _furiCountList.Add(i);
@@ -215,6 +232,10 @@ public class TypingManager : MonoBehaviour
         for (int i = 0; i < romList.Count; i++)
         {
             string a = romList[i];
+            if (a == "SKIP")
+            {
+                continue;
+            }
             for (int j = 0; j < a.Length; j++)
             {
                 _furiCountList.Add(i);
@@ -222,6 +243,21 @@ public class TypingManager : MonoBehaviour
             }
         }
         //Debug.Log(string.Join(",", _romSliceList));
+    }
+
+    // SKIPなしの表示をさせるためのListを作り直す
+    List<string> GetRomSliceListWithoutSkip()
+    {
+        List<string> returnList = new List<string>();
+        foreach(string rom in _romSliceList)
+        {
+            if (rom == "SKIP")
+            {
+                continue;
+            }
+            returnList.Add(rom);
+        }
+        return returnList;
     }
 
     // 問題を出すための関数
@@ -238,12 +274,14 @@ public class TypingManager : MonoBehaviour
 
         CreatRomSliceList(_fString);
 
-        _aString = string.Join("", _romSliceList);
+        _aString = string.Join("", GetRomSliceListWithoutSkip());
 
         // 文字を変更する
         fText.text = _fString;
         qText.text = _qString;
         aText.text = _aString;
+
+        //Debug.Log(string.Join("", _romSliceList));
     }
 
     // 正解用の関数
