@@ -80,7 +80,7 @@ public class TypingManager : MonoBehaviour
             }
 
             // 正解じゃなかったら
-            if (isCorrect)
+            if (!isCorrect)
             {
                 // 失敗
                 Miss();
