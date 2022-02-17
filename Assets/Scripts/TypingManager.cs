@@ -120,41 +120,18 @@ public class TypingManager : MonoBehaviour
                 // 今どの ふりがな を打たないといけないのかを取得する
                 string currentFuri = _fString[furiCount].ToString();
 
-                if (cd.dic.ContainsKey(currentFuri))
+                if (furiCount < _fString.Length - 1)
                 {
+                    // 2文字を考慮した候補検索「しゃ」
+                    string addNextMoji = _fString[furiCount].ToString() + _fString[furiCount + 1].ToString();
+                    CheckIrregukarType(addNextMoji, furiCount, false);
+                }
 
-                    List<string> stringList = cd.dic[currentFuri]; // ci, shi
-                    Debug.Log(string.Join(",", stringList));
-
-                    // stringList[0] ci, stringList[1] shi
-                    for (int i = 0; i < stringList.Count; i++)
-                    {
-                        string rom = stringList[i];
-                        int romNum = _romNumList[_aNum];
-                        if (Input.GetKeyDown(rom[romNum].ToString()))
-                        {
-                            _romSliceList[furiCount] = rom;
-                            _aString = string.Join("", GetRomSliceListWithoutSkip());
-
-                            ReCreatList(_romSliceList);
-
-                            // trueにする
-                            isCorrect = true;
-
-                            AddSmallMoji();
-
-                            // 正解
-                            Correct();
-
-                            // 最後の文字に正解したら
-                            if (_aNum >= _aString.Length)
-                            {
-                                // 問題を変える
-                                OutPut();
-                            }
-                            break;
-                        }
-                    }
+                if (!isCorrect)
+                {
+                    // 今まで通りの候補検索「し」「ゃ」
+                    string moji = _fString[furiCount].ToString();
+                    CheckIrregukarType(moji, furiCount, true);
                 }
             }
 
@@ -165,6 +142,61 @@ public class TypingManager : MonoBehaviour
                 Miss();
             }
         }
+    }
+
+    void CheckIrregukarType(string currentFuri, int furiCount, bool addSmallMoji)
+    {
+        if (cd.dic.ContainsKey(currentFuri))
+        {
+
+            List<string> stringList = cd.dic[currentFuri]; // ci, shi
+            Debug.Log(string.Join(",", stringList));
+
+            // stringList[0] ci, stringList[1] shi
+            for (int i = 0; i < stringList.Count; i++)
+            {
+                string rom = stringList[i];
+                int romNum = _romNumList[_aNum];
+
+                bool preCheck = true;
+
+                for (int j = 0; j < romNum; j++)
+                {
+                    if (rom[j] != _romSliceList[furiCount][j])
+                    {
+                        preCheck = false;
+                    }
+                }
+
+                if (preCheck && Input.GetKeyDown(rom[romNum].ToString()))
+                {
+                    _romSliceList[furiCount] = rom;
+                    _aString = string.Join("", GetRomSliceListWithoutSkip());
+
+                    ReCreatList(_romSliceList);
+
+                    // trueにする
+                    isCorrect = true;
+
+                    if (addSmallMoji)
+                    {
+                        AddSmallMoji();
+                    }
+
+                    // 正解
+                    Correct();
+
+                    // 最後の文字に正解したら
+                    if (_aNum >= _aString.Length)
+                    {
+                        // 問題を変える
+                        OutPut();
+                    }
+                    break;
+                }
+            }
+        }
+
     }
 
     void SetList()
