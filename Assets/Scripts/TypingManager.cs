@@ -38,6 +38,9 @@ public class TypingManager : MonoBehaviour
     // 問題の何文字目か
     private int _aNum;
 
+    // 合ってるかどうかの判断
+    bool isCorrect;
+
     // ゲームを始めた時に1度だけ呼ばれるもの
     void Start()
     {
@@ -51,22 +54,37 @@ public class TypingManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(_aString[_aNum].ToString()))
+        // 入力された時に
+        if (Input.anyKeyDown)
         {
-            // 正解
-            Correct();
-
-            // 最後の文字に正解したら
-            if (_aNum >= _aString.Length)
+            // 完全に合ってたら正解！
+            if (Input.GetKeyDown(_aString[_aNum].ToString()))
             {
-                // 問題を変える
-                OutPut();
+                // trueにする
+                isCorrect = true;
+
+                // 正解
+                Correct();
+
+                // 最後の文字に正解したら
+                if (_aNum >= _aString.Length)
+                {
+                    // 問題を変える
+                    OutPut();
+                }
             }
-        }
-        else if (Input.anyKeyDown)
-        {
-            // 失敗
-            Miss();
+            else
+            {
+                // 柔軟な入力があるかどうか
+                // 「し」→ "si" , "shi"
+            }
+
+            // 正解じゃなかったら
+            if (isCorrect)
+            {
+                // 失敗
+                Miss();
+            }
         }
     }
 
