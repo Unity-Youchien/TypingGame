@@ -49,8 +49,8 @@ public class TypingManager : MonoBehaviour
     // {0,0,1,2,2,3}
     // {0,1,0,0,1,0}
     private List<string> _romSliceList = new List<string>();
-    private List<int> _furiCountList = new List<int>() { 0, 0, 1, 2, 2, 3 };
-    private List<int> _romNumList = new List<int>() { 0, 1, 0, 0, 1, 0 };
+    private List<int> _furiCountList = new List<int>();
+    private List<int> _romNumList = new List<int>();
 
     // ゲームを始めた時に1度だけ呼ばれるもの
     void Start()
@@ -70,10 +70,33 @@ public class TypingManager : MonoBehaviour
         // 入力された時に
         if (Input.anyKeyDown)
         {
+            int furiCount = _furiCountList[_aNum];
+
             // 完全に合ってたら正解！
             // し s  i
             if (Input.GetKeyDown(_aString[_aNum].ToString()))
             {
+                // trueにする
+                isCorrect = true;
+
+                // 正解
+                Correct();
+
+                // 最後の文字に正解したら
+                if (_aNum >= _aString.Length)
+                {
+                    // 問題を変える
+                    OutPut();
+                }
+            }
+            else if (Input.GetKeyDown("n") && furiCount > 0 && _romSliceList[furiCount - 1] == "n")
+            {
+                // nnにしたい
+                _romSliceList[furiCount - 1] = "nn";
+                _aString = string.Join("", _romSliceList);
+
+                ReCreatList(_romSliceList);
+
                 // trueにする
                 isCorrect = true;
 
@@ -93,7 +116,6 @@ public class TypingManager : MonoBehaviour
                 // 柔軟な入力があるかどうか
                 // 「し」→ "si" , "shi"
                 // 今どの ふりがな を打たないといけないのかを取得する
-                int furiCount = _furiCountList[_aNum];
                 string currentFuri = _fString[furiCount].ToString();
                 List<string> stringList = cd.dicEx[currentFuri]; // ci, shi
                 Debug.Log(string.Join(",", stringList));
@@ -105,6 +127,11 @@ public class TypingManager : MonoBehaviour
                     int romNum = _romNumList[_aNum];
                     if (Input.GetKeyDown(rom[romNum].ToString()))
                     {
+                        _romSliceList[furiCount] = rom;
+                        _aString = string.Join("", _romSliceList);
+
+                        ReCreatList(_romSliceList);
+
                         // trueにする
                         isCorrect = true;
 
@@ -117,6 +144,7 @@ public class TypingManager : MonoBehaviour
                             // 問題を変える
                             OutPut();
                         }
+                        break;
                     }
                 }
             }
@@ -143,17 +171,45 @@ public class TypingManager : MonoBehaviour
     }
 
     // しんぶん→"shi","n","bu","n"
+    // { 0, 0, 1, 2, 2, 3 }
+    // { 0, 1, 0, 0, 1, 0 }
     void CreatRomSliceList(string moji)
     {
         _romSliceList.Clear();
+        _furiCountList.Clear();
+        _romNumList.Clear();
 
         // 「し」→「si」,「ん」→「n」
         for (int i = 0; i < moji.Length; i++)
         {
             string a = cd.dic[moji[i].ToString()];
             _romSliceList.Add(a);
+
+            for (int j = 0; j < a.Length; j++)
+            {
+                _furiCountList.Add(i);
+                _romNumList.Add(j);
+            }
         }
         Debug.Log(string.Join(",", _romSliceList));
+    }
+
+    void ReCreatList(List<string> romList)
+    {
+        _furiCountList.Clear();
+        _romNumList.Clear();
+
+        // 「し」→「si」,「ん」→「n」
+        for (int i = 0; i < romList.Count; i++)
+        {
+            string a = romList[i];
+            for (int j = 0; j < a.Length; j++)
+            {
+                _furiCountList.Add(i);
+                _romNumList.Add(j);
+            }
+        }
+        //Debug.Log(string.Join(",", _romSliceList));
     }
 
     // 問題を出すための関数
@@ -163,8 +219,7 @@ public class TypingManager : MonoBehaviour
         _aNum = 0;
 
         // _qNumに０〜問題数の数までのランダムな数字を1つ入れる
-        //_qNum = Random.Range(0, _qList.Count);
-        _qNum = 2;
+        _qNum = Random.Range(0, _qList.Count);
 
         _fString = _fList[_qNum];
         _qString = _qList[_qNum];
