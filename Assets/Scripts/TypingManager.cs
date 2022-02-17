@@ -189,6 +189,12 @@ public class TypingManager : MonoBehaviour
         for (int i = 0; i < moji.Length; i++)
         {
             string a = cd.dic[moji[i].ToString()];
+
+            if (moji[i].ToString() == "っ" && i + 1 < moji.Length)
+            {
+                a = cd.dic[moji[i + 1].ToString()][0].ToString();
+            }
+
             _romSliceList.Add(a);
 
             for (int j = 0; j < a.Length; j++)
