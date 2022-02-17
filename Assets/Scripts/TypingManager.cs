@@ -44,8 +44,13 @@ public class TypingManager : MonoBehaviour
 
     private ChangeDictionary cd;
 
+    // しんぶん→"si","n","bu","n"
     // しんぶん→"shi","n","bu","n"
+    // {0,0,1,2,2,3}
+    // {0,1,0,0,1,0}
     private List<string> _romSliceList = new List<string>();
+    private List<int> _furiCountList = new List<int>() { 0, 0, 1, 2, 2, 3 };
+    private List<int> _romNumList = new List<int>() { 0, 1, 0, 0, 1, 0 };
 
     // ゲームを始めた時に1度だけ呼ばれるもの
     void Start()
@@ -66,6 +71,7 @@ public class TypingManager : MonoBehaviour
         if (Input.anyKeyDown)
         {
             // 完全に合ってたら正解！
+            // し s  i
             if (Input.GetKeyDown(_aString[_aNum].ToString()))
             {
                 // trueにする
@@ -83,8 +89,36 @@ public class TypingManager : MonoBehaviour
             }
             else
             {
+                // し →si, ci, shi
                 // 柔軟な入力があるかどうか
                 // 「し」→ "si" , "shi"
+                // 今どの ふりがな を打たないといけないのかを取得する
+                int furiCount = _furiCountList[_aNum];
+                string currentFuri = _fString[furiCount].ToString();
+                List<string> stringList = cd.dicEx[currentFuri]; // ci, shi
+                Debug.Log(string.Join(",", stringList));
+
+                // stringList[0] ci, stringList[1] shi
+                for (int i = 0; i < stringList.Count; i++)
+                {
+                    string rom = stringList[i];
+                    int romNum = _romNumList[_aNum];
+                    if (Input.GetKeyDown(rom[romNum].ToString()))
+                    {
+                        // trueにする
+                        isCorrect = true;
+
+                        // 正解
+                        Correct();
+
+                        // 最後の文字に正解したら
+                        if (_aNum >= _aString.Length)
+                        {
+                            // 問題を変える
+                            OutPut();
+                        }
+                    }
+                }
             }
 
             // 正解じゃなかったら
@@ -129,7 +163,8 @@ public class TypingManager : MonoBehaviour
         _aNum = 0;
 
         // _qNumに０〜問題数の数までのランダムな数字を1つ入れる
-        _qNum = Random.Range(0, _qList.Count);
+        //_qNum = Random.Range(0, _qList.Count);
+        _qNum = 2;
 
         _fString = _fList[_qNum];
         _qString = _qList[_qNum];
