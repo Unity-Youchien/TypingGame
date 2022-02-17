@@ -67,9 +67,10 @@ public class TypingManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // 入力された時に
+        // 入力された時に判断する
         if (Input.anyKeyDown)
         {
+            isCorrect = false;
             int furiCount = _furiCountList[_aNum];
 
             // 完全に合ってたら正解！
@@ -117,34 +118,39 @@ public class TypingManager : MonoBehaviour
                 // 「し」→ "si" , "shi"
                 // 今どの ふりがな を打たないといけないのかを取得する
                 string currentFuri = _fString[furiCount].ToString();
-                List<string> stringList = cd.dicEx[currentFuri]; // ci, shi
-                Debug.Log(string.Join(",", stringList));
 
-                // stringList[0] ci, stringList[1] shi
-                for (int i = 0; i < stringList.Count; i++)
+                if (cd.dicEx.ContainsKey(currentFuri))
                 {
-                    string rom = stringList[i];
-                    int romNum = _romNumList[_aNum];
-                    if (Input.GetKeyDown(rom[romNum].ToString()))
+
+                    List<string> stringList = cd.dicEx[currentFuri]; // ci, shi
+                    Debug.Log(string.Join(",", stringList));
+
+                    // stringList[0] ci, stringList[1] shi
+                    for (int i = 0; i < stringList.Count; i++)
                     {
-                        _romSliceList[furiCount] = rom;
-                        _aString = string.Join("", _romSliceList);
-
-                        ReCreatList(_romSliceList);
-
-                        // trueにする
-                        isCorrect = true;
-
-                        // 正解
-                        Correct();
-
-                        // 最後の文字に正解したら
-                        if (_aNum >= _aString.Length)
+                        string rom = stringList[i];
+                        int romNum = _romNumList[_aNum];
+                        if (Input.GetKeyDown(rom[romNum].ToString()))
                         {
-                            // 問題を変える
-                            OutPut();
+                            _romSliceList[furiCount] = rom;
+                            _aString = string.Join("", _romSliceList);
+
+                            ReCreatList(_romSliceList);
+
+                            // trueにする
+                            isCorrect = true;
+
+                            // 正解
+                            Correct();
+
+                            // 最後の文字に正解したら
+                            if (_aNum >= _aString.Length)
+                            {
+                                // 問題を変える
+                                OutPut();
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
             }
