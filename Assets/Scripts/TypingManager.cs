@@ -12,9 +12,20 @@ public class TypingManager : MonoBehaviour
     [SerializeField] Text aText; // 答え用のテキスト
 
     // 問題を用意しておく
+    /*
     private string[] _furigana = { "たいぴんぐ", "もんだい", "ようちえん" };
     private string[] _question = { "タイピング", "問題", "幼稚園" };
-    private string[] _answer = { "taipingu", "mondai", "youchien" };
+    private string[] _answer = { "taipingu", "mondai", "youchien" };*/
+
+    // テキストデータを読み込む
+    [SerializeField] TextAsset _furigana;
+    [SerializeField] TextAsset _question;
+    [SerializeField] TextAsset _answer;
+
+    // テキストデータを格納するためのリスト
+    private List<string> _fList = new List<string>();
+    private List<string> _qList = new List<string>();
+    private List<string> _aList = new List<string>();
 
     // 何番目か指定するためのstring
     private string _fString;
@@ -30,6 +41,9 @@ public class TypingManager : MonoBehaviour
     // ゲームを始めた時に1度だけ呼ばれるもの
     void Start()
     {
+        // テキストデータをリストに入れる
+        SetList();
+
         // 問題を出す
         OutPut();
     }
@@ -56,6 +70,18 @@ public class TypingManager : MonoBehaviour
         }
     }
 
+    void SetList()
+    {
+        string[] _fArray = _furigana.text.Split('\n');
+        _fList.AddRange(_fArray);
+
+        string[] _qArray = _question.text.Split('\n');
+        _qList.AddRange(_qArray);
+
+        string[] _aArray = _answer.text.Split('\n');
+        _aList.AddRange(_aArray);
+    }
+
     // 問題を出すための関数
     void OutPut()
     {
@@ -63,11 +89,11 @@ public class TypingManager : MonoBehaviour
         _aNum = 0;
 
         // _qNumに０〜問題数の数までのランダムな数字を1つ入れる
-        _qNum = Random.Range(0, _question.Length);
+        _qNum = Random.Range(0, _qList.Count);
 
-        _fString = _furigana[_qNum];
-        _qString = _question[_qNum];
-        _aString = _answer[_qNum];
+        _fString = _fList[_qNum];
+        _qString = _qList[_qNum];
+        _aString = _aList[_qNum];
 
         // 文字を変更する
         fText.text = _fString;
