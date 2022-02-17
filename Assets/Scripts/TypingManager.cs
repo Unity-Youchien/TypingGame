@@ -119,10 +119,10 @@ public class TypingManager : MonoBehaviour
                 // 今どの ふりがな を打たないといけないのかを取得する
                 string currentFuri = _fString[furiCount].ToString();
 
-                if (cd.dicEx.ContainsKey(currentFuri))
+                if (cd.dic.ContainsKey(currentFuri))
                 {
 
-                    List<string> stringList = cd.dicEx[currentFuri]; // ci, shi
+                    List<string> stringList = cd.dic[currentFuri]; // ci, shi
                     Debug.Log(string.Join(",", stringList));
 
                     // stringList[0] ci, stringList[1] shi
@@ -188,7 +188,7 @@ public class TypingManager : MonoBehaviour
         // 「し」→「si」,「ん」→「n」
         for (int i = 0; i < moji.Length; i++)
         {
-            string a = cd.dic[moji[i].ToString()];
+            string a = cd.dic[moji[i].ToString()][0];
 
             if (moji[i].ToString() == "ゃ" || moji[i].ToString() == "ゅ" || moji[i].ToString() == "ょ")
             {
@@ -196,7 +196,7 @@ public class TypingManager : MonoBehaviour
             }
             else if (moji[i].ToString() == "っ" && i + 1 < moji.Length)
             {
-                a = cd.dic[moji[i + 1].ToString()][0].ToString();
+                a = cd.dic[moji[i + 1].ToString()][0][0].ToString();
             }
             else if (i + 1 < moji.Length)
             {
@@ -204,7 +204,7 @@ public class TypingManager : MonoBehaviour
                 string addNextMoji = moji[i].ToString() + moji[i + 1].ToString();
                 if (cd.dic.ContainsKey(addNextMoji))
                 {
-                    a = cd.dic[addNextMoji];
+                    a = cd.dic[addNextMoji][0];
                 }
             }
 
