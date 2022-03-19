@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using System;
 
 // 画面にあるテキストの文字を変更したい
 public class TypingManager : MonoBehaviour
@@ -42,6 +43,9 @@ public class TypingManager : MonoBehaviour
     // 合ってるかどうかの判断
     bool isCorrect;
 
+    // Shiftが押されてるかどうかの判定
+    bool isShift;
+
     private ChangeDictionary cd;
 
     // しんぶん→"si","n","bu","n"
@@ -70,12 +74,27 @@ public class TypingManager : MonoBehaviour
         // 入力された時に判断する
         if (Input.anyKeyDown)
         {
+            if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+            {
+                return;
+            }
+
             isCorrect = false;
             int furiCount = _furiCountList[_aNum];
 
+            // 入力されたキーが何か確認する
+            foreach (KeyCode code in Enum.GetValues(typeof(KeyCode)))
+            {
+                if (Input.GetKeyDown(code))
+                {
+                    Debug.Log(code);
+                    break;
+                }
+            }
+
             // 完全に合ってたら正解！
             // し s  i
-            if (Input.GetKeyDown(_aString[_aNum].ToString()))
+            if (Input.GetKeyDown(_aString[_aNum].ToString()) || GetKeyReturn() == _aString[_aNum].ToString())
             {
                 // trueにする
                 isCorrect = true;
@@ -142,6 +161,21 @@ public class TypingManager : MonoBehaviour
                 Miss();
             }
         }
+    }
+
+    // 入力されたキーを正しいものに変換させる
+    string GetKeyReturn()
+    {
+        isShift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+
+        if (isShift)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                return "!";
+            }
+        }
+        return "";
     }
 
     void CheckIrregukarType(string currentFuri, int furiCount, bool addSmallMoji)
@@ -332,7 +366,7 @@ public class TypingManager : MonoBehaviour
         _aNum = 0;
 
         // _qNumに０〜問題数の数までのランダムな数字を1つ入れる
-        _qNum = Random.Range(0, _qList.Count);
+        _qNum = UnityEngine.Random.Range(0, _qList.Count);
 
         _fString = _fList[_qNum];
         _qString = _qList[_qNum];
